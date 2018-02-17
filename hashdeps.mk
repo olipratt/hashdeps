@@ -1,17 +1,21 @@
+# CONFIGURATION ---------------------------------------------------------------
+# Users can override any of the following defaults e.g. by setting these
+# variables before including this file or passing values at the command line.
+# -----------------------------------------------------------------------------
 
 # The suffix used for files that contain the hashes of dependencies.
 # Can be changed if desired, but must be unique to files created by this
 # utility.
-HASHDEPS_HASH_SUFFIX = .dephash
+HASHDEPS_HASH_SUFFIX ?= .dephash
 
 # Specify a directory to store hashes in rather than putting them alongside
 # dependency files, which could otherwise undedsirably pollute the source tree.
 # Leave blank to just out hash files alongside dependency files.
-HASHDEPS_HASH_TREE_DIR =
+HASHDEPS_HASH_TREE_DIR ?=
 
 # Set this variable to some non-whitespace value to disable any echoing by
 # recipes in this utility.
-HASHDEPS_QUIET =
+HASHDEPS_QUIET ?=
 
 # INTERNALS -------------------------------------------------------------------
 # Users should not change anything below this line.

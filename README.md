@@ -2,7 +2,7 @@
 
 GNU make file which can be included to configure rebuilding of a target based on a dependency's content changing rather than its modification time.
 
-A good parallel to draw is [ccache](https://ccache.samba.org/), except this works for all build targets, not just C files.
+A good parallel to draw is with [ccache](https://ccache.samba.org/), except this works for all build targets, not just C files.
 
 ## Use Cases
 
@@ -48,25 +48,49 @@ Suppose you have a CI system that builds objects and can cache the objects betwe
 
 - While this utility helps speed up build times in the main uses cases covered above, in completely clean builds there will be the overhead of computing hashes on top of any usual building work and so these will almost certainly be some amount slower.
 
+## Simple Examples
+
+See the unit test files for other examples of this utility in use.
+
+### Converting a Target to use Hashed Dependencies
+
+Starting with:
+
+```makefile
+combined.txt: a.txt b.txt
+    echo "Concatenating files"
+    cat a.txt b.txt > combined.txt
+```
+
+All that needs to be done is include the makefile and pass the dependencies to hash to the `hash_dep` function.
+
+```makefile
+include hashdeps.mk
+
+# This file is only regenerated if the contents of a.txt or b.txt changes.
+# e.g. running:
+# 'make combined.txt; touch a.txt; make combined.txt'
+# only echo-es once, the first time.
+combined.txt: $(call hash_dep,a.txt b.txt)
+    echo "Concatenating files"
+    cat a.txt b.txt > combined.txt
+```
+
 ## Configuration
 
-The following configuration can be set by users of this utility.
+The following configuration can be set by users of this utility - e.g. by setting the variables _before_ including the provided makefile, or at the command line call to make.
 
-- Set the suffix used for files containing dependency hashes by setting the following variable after including this utility. The suffix must be unique to files created by this utility.
+- Set the suffix used for files containing dependency hashes by setting the following variable. The suffix must be unique to files created by this utility, cannot be blank, and should include any starting `.`.
 
     ```makefile
     HASHDEPS_HASH_SUFFIX := .dephash
     ```
 
-- Store file hashes in a separate directory tree (e.g. to avoid polluting the source tree) - otherwise by default hashes are stored in files alongside the dependency files.
+- Store file hashes in a separate directory tree (e.g. to avoid polluting the source tree) - otherwise by default hashes are stored in files alongside the dependency files. The following setting would store the hash for `source/file.txt` as `hashtree/source/file.txt.dephash`.
 
     ```makefile
     HASHDEPS_HASH_TREE_DIR := hashtree
     ```
-
-## Simple Examples
-
-See the unit test files for some examples of this utility in use.
 
 ## Development
 
