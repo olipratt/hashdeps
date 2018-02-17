@@ -49,6 +49,6 @@ The following configuration can be set by users of this utility.
 
 ## Development
 
-Install `shunit2` using your system's package manager.
+Install `shunit2` and `shellcheck` using your system's package manager.
 
 Run tests with `make test`
