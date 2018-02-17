@@ -1,6 +1,7 @@
 
 # The suffix used for files that contain the hashes of dependencies.
-# Can be changed if desired, but must be unique to files created by this tool.
+# Can be changed if desired, but must be unique to files created by this
+# utility.
 HASH_FILE_SUFFIX := .dephash
 
 # INTERNALS -------------------------------------------------------------------

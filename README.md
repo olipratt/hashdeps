@@ -39,9 +39,9 @@ Since Git commits don't include file timstamps, the checkout of the original bra
 
 ## Configuration
 
-The following configuration can be set by users of this tool.
+The following configuration can be set by users of this utility.
 
-- Set the suffix used for files containing dependency hashes by setting the following variable after including this tool. The suffix must be unique to files created by this tool.
+- Set the suffix used for files containing dependency hashes by setting the following variable after including this utility. The suffix must be unique to files created by this utility.
 
     ```makefile
     HASH_FILE_SUFFIX := .dephash
