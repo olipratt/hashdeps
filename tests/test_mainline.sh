@@ -17,6 +17,7 @@ clean_tmp_files()
     log "Cleaning tmp files..."
     rm -fv -- *.tmp
     rm -fv -- *.dephash
+    rm -frv -- hashes
 }
 
 # shunit2 function called before each test.
@@ -60,6 +61,34 @@ test_edit_means_remake()
     # Edit the dependency and re-make the file - it should be updated.
     echo "text" > file1.tmp
     make -f mainline.mk file2.tmp
+    assertEquals "Second make failed" 2 "$(wc -l < file2.tmp)"
+}
+
+test_touch_means_no_remake_hash_dir()
+{
+    # Make the file, which will create it with one line.
+    touch file1.tmp
+    make -f mainline.mk file2.tmp HASH_FILE_TREE_DIR=./hashes
+    assertTrue "Didn't create hash directory" "[ -d hashes ]"
+    assertEquals "First make failed" 1 "$(wc -l < file2.tmp)"
+
+    # Touch the dependency and re-make the file - it should be unchanged.
+    touch file1.tmp
+    make -f mainline.mk file2.tmp HASH_FILE_TREE_DIR=./hashes
+    assertEquals "Second make failed" 1 "$(wc -l < file2.tmp)"
+}
+
+test_edit_means_remake_hash_dir()
+{
+    # Make the file, which will create it with one line.
+    touch file1.tmp
+    make -f mainline.mk file2.tmp HASH_FILE_TREE_DIR=./hashes
+    assertTrue "Didn't create hash directory" "[ -d hashes ]"
+    assertEquals "First make failed" 1 "$(wc -l < file2.tmp)"
+
+    # Edit the dependency and re-make the file - it should be updated.
+    echo "text" > file1.tmp
+    make -f mainline.mk file2.tmp HASH_FILE_TREE_DIR=./hashes
     assertEquals "Second make failed" 2 "$(wc -l < file2.tmp)"
 }
 
