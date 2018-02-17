@@ -55,13 +55,13 @@ The following configuration can be set by users of this utility.
 - Set the suffix used for files containing dependency hashes by setting the following variable after including this utility. The suffix must be unique to files created by this utility.
 
     ```makefile
-    HASH_FILE_SUFFIX := .dephash
+    HASHDEPS_HASH_SUFFIX := .dephash
     ```
 
 - Store file hashes in a separate directory tree (e.g. to avoid polluting the source tree) - otherwise by default hashes are stored in files alongside the dependency files.
 
     ```makefile
-    HASH_FILE_TREE_DIR := hashtree
+    HASHDEPS_HASH_TREE_DIR := hashtree
     ```
 
 ## Simple Examples
