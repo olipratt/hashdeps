@@ -35,7 +35,7 @@ HASHDEPS_HASH_TREE_SANITISED = \
 
 # Function to convert a normal dependency to a hashed dependency.
 # Takes one argument - a space separated list of dependencies to convert.
-define hash_dep
+define hash_deps
     $(foreach dep,$(1),$(HASHDEPS_HASH_TREE_SANITISED)$(dep)$(HASHDEPS_HASH_SUFFIX))
 endef
 

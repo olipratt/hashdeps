@@ -62,7 +62,7 @@ combined.txt: a.txt b.txt
     cat a.txt b.txt > combined.txt
 ```
 
-All that needs to be done is include the makefile and pass the dependencies to hash to the `hash_dep` function.
+All that needs to be done is include the makefile and pass the dependencies to hash to the `hash_deps` function.
 
 ```makefile
 include hashdeps.mk
@@ -71,7 +71,7 @@ include hashdeps.mk
 # e.g. running:
 # 'make combined.txt; touch a.txt; make combined.txt'
 # only echo-es once, the first time.
-combined.txt: $(call hash_dep,a.txt b.txt)
+combined.txt: $(call hash_deps,a.txt b.txt)
     echo "Concatenating files"
     cat a.txt b.txt > combined.txt
 ```
