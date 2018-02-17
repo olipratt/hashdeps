@@ -1,5 +1,9 @@
 #! /bin/bash
 
+# For the tests, disable makefiles from printing their working directory as it
+# produces too much stdout spam.
+export MAKEFLAGS+=--no-print-directory
+
 log()
 {
     echo "$@"
