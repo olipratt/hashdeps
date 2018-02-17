@@ -27,7 +27,7 @@ Suppose you have a CI system that builds objects and can cache the objects betwe
 
 - Should support any version of GNU make.
 - Requires the `md5sum` utility to be installed.
-- Only has Linux support currently.
+- Only has Linux support currently, and only tested with the `bash` shell.
 
 ## Usage
 

@@ -9,9 +9,20 @@ HASH_FILE_SUFFIX = .dephash
 # Leave blank to just out hash files alongside dependency files.
 HASH_FILE_TREE_DIR =
 
+# Set this variable to some non-whitespace value to disable any echoing by
+# recipes in this utility.
+HASHDEPS_QUIET =
+
 # INTERNALS -------------------------------------------------------------------
 # Users should not change anything below this line.
 # -----------------------------------------------------------------------------
+
+# Either actually echo or just use true, which 'does nothing, successfully'.
+ifeq ($(strip $(HASHDEPS_QUIET)),)
+HASHDEPS_ECHO := echo
+else
+HASHDEPS_ECHO := true
+endif
 
 # Only if the value is non-empty, make sure it ends in a forward slash so
 # another directory or filename can be appended correctly.
@@ -43,4 +54,6 @@ endif
 # some stderr text which we purposely ignore.
 $(HASH_FILE_TREE_SANITISED)%$(HASH_FILE_SUFFIX): %
 	@$(hash_file_tree_dir_create)
-	@md5sum -c $@ --status 2>/dev/null || md5sum $< > $@
+	@ { md5sum -c $@ --status 2>/dev/null && \
+		$(HASHDEPS_ECHO) "Hash file still up to date: $@" ;} || \
+		{ $(HASHDEPS_ECHO) "Updating hash file: $@" && md5sum $< > $@; }
