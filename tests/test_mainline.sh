@@ -118,4 +118,6 @@ test_edit_means_remake_two_deps()
     assertEquals "First make failed" 2 "$(wc -l < file12.tmp)"
 }
 
+# Cope with Shellcheck not being able to find the shunit file.
+# shellcheck disable=SC1091
 . shunit2

@@ -39,17 +39,6 @@ define hash_deps
     $(foreach dep,$(1),$(HASHDEPS_HASH_TREE_SANITISED)$(dep)$(HASHDEPS_HASH_SUFFIX))
 endef
 
-# Only call out to create the directory in the separate directory tree if
-# there is one in use, to avoid unnecessary work.
-ifneq ($(HASHDEPS_HASH_TREE_SANITISED),)
-define hashdeps_hash_tree_dir_create =
-mkdir -p $(dir $@)
-endef
-else
-define hashdeps_hash_tree_dir_create =
-endef
-endif
-
 # Make will delete files created by pattern rules by default - prevent this.
 .PRECIOUS: %$(HASHDEPS_HASH_SUFFIX)
 
@@ -58,7 +47,7 @@ endif
 # If the file doesn't exist, md5sum returns an error status code, and prints
 # some stderr text which we purposely ignore.
 $(HASHDEPS_HASH_TREE_SANITISED)%$(HASHDEPS_HASH_SUFFIX): %
-	@$(hashdeps_hash_tree_dir_create)
-	@ { md5sum -c $@ --status 2>/dev/null && \
+	@mkdir -p $(dir $@)
+	@{ md5sum -c $@ --status 2>/dev/null && \
 		$(HASHDEPS_ECHO) "Hash file still up to date: $@" ;} || \
 		{ $(HASHDEPS_ECHO) "Updating hash file: $@" && md5sum $< > $@; }
