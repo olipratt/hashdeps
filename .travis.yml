@@ -1,0 +1,6 @@
+language: bash
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y shellcheck shunit2 make
+script:
+  - make test
