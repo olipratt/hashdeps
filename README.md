@@ -1,5 +1,7 @@
 # Hashdeps
 
+[![Build Status](https://travis-ci.org/olipratt/hashdeps.svg?branch=master)](https://travis-ci.org/olipratt/hashdeps)
+
 GNU make file which can be included to configure rebuilding of a target based on a dependency's content changing rather than its modification time.
 
 A good parallel to draw is with [ccache](https://ccache.samba.org/), except this works for all build targets, not just C files.
