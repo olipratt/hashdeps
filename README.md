@@ -17,7 +17,7 @@ In a git codebase, you:
 - checkout the original branch
 - build again with the code exactly as it was before.
 
-Since Git commits don't include file timstamps, the checkout of the original branch sets the modification times of any changed files to the current time, so the build through `make` will still trigger rebuilds.
+Since Git commits don't include file timestamps, the checkout of the original branch sets the modification times of any changed files to the current time, so the build through `make` will still trigger rebuilds.
 
 ### CI System Caching/Passing Built Objects Between Instances
 
@@ -32,8 +32,8 @@ Suppose you have a CI system that builds objects and can cache the objects betwe
 ## Usage
 
 1. Add the makefile to your project.
-  1. Either add this repository as a [git submodule](https://github.com/blog/2104-working-with-submodules) of your Git project, or
-  1. just download the `hashdeps.mk` file into a suitable location in your project.
+    1. Either add this repository as a [git submodule](https://github.com/blog/2104-working-with-submodules) of your Git project, or
+    1. just download the `hashdeps.mk` file into a suitable location in your project.
 1. Include `hashdeps.mk` from your main `Makefile` - e.g. assuming you put the file in a directory `makefiles/`, add the line:
 
     ```makefile
