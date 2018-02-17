@@ -30,9 +30,9 @@ HASHDEPS_HASH_TREE_SANITISED = \
 	$(addsuffix /,$(strip $(HASHDEPS_HASH_TREE_DIR)))
 
 # Function to convert a normal dependency to a hashed dependency.
-# Takes one argument - the dependency to convert.
+# Takes one argument - a space separated list of dependencies to convert.
 define hash_dep
-    $(HASHDEPS_HASH_TREE_SANITISED)$(1)$(HASHDEPS_HASH_SUFFIX)
+    $(foreach dep,$(1),$(HASHDEPS_HASH_TREE_SANITISED)$(dep)$(HASHDEPS_HASH_SUFFIX))
 endef
 
 # Only call out to create the directory in the separate directory tree if

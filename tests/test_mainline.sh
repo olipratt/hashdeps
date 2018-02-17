@@ -59,7 +59,7 @@ test_edit_means_remake()
     assertEquals "First make failed" 1 "$(wc -l < file2.tmp)"
 
     # Edit the dependency and re-make the file - it should be updated.
-    echo "text" > file1.tmp
+    echo "text" >> file1.tmp
     make -f mainline.mk file2.tmp
     assertEquals "Second make failed" 2 "$(wc -l < file2.tmp)"
 }
@@ -87,9 +87,35 @@ test_edit_means_remake_hash_dir()
     assertEquals "First make failed" 1 "$(wc -l < file2.tmp)"
 
     # Edit the dependency and re-make the file - it should be updated.
-    echo "text" > file1.tmp
+    echo "text" >> file1.tmp
     make -f mainline.mk file2.tmp HASHDEPS_HASH_TREE_DIR=./hashes
     assertEquals "Second make failed" 2 "$(wc -l < file2.tmp)"
+}
+
+test_touch_means_no_remake_two_deps()
+{
+    # Make the file, which will create it with one line.
+    touch file10.tmp file11.tmp
+    make -f mainline.mk file12.tmp
+    assertEquals "First make failed" 1 "$(wc -l < file12.tmp)"
+
+    # Touch the dependencies and re-make the file - it should be unchanged.
+    touch file10.tmp file11.tmp
+    make -f mainline.mk file12.tmp
+    assertEquals "Second make failed" 1 "$(wc -l < file12.tmp)"
+}
+
+test_edit_means_remake_two_deps()
+{
+    # Make the file, which will create it with one line.
+    touch file10.tmp file11.tmp
+    make -f mainline.mk file12.tmp
+    assertEquals "First make failed" 1 "$(wc -l < file12.tmp)"
+
+    # Edit a dependency and re-make the file - it should be updated.
+    echo "text" >> file11.tmp
+    make -f mainline.mk file12.tmp
+    assertEquals "First make failed" 2 "$(wc -l < file12.tmp)"
 }
 
 . shunit2
