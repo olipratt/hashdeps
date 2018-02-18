@@ -1,6 +1,27 @@
+# API -------------------------------------------------------------------------
+# Information on using this utility.
+# -----------------------------------------------------------------------------
+#
+# There are two main API functions exposed by this file:
+# `hash_deps` and `unhash_deps`
+# These are used in make rules to convert dependencies to dependencies on the
+# hashes (contents) of those files, and then to convert references to the
+# dependency hashes back to the original dependency files.
+#
+# combined.txt: $(call hash_deps,a.txt b.txt)
+#    echo "Concatenating files"
+#    cat $(call unhash_deps,$^) > combined.txt
+#
+# Note that these should not be used on PHONY dependencies, as it makes no
+# sense - they are not files that can be hashed, and always cause a target that
+# depends on them to be remade.
+#
+# There is configuration below to let you alter the default behaviour to your
+# liking.
+
 # CONFIGURATION ---------------------------------------------------------------
 # Users can override any of the following defaults e.g. by setting these
-# variables before including this file or passing values at the command line.
+# variables _before_ including this file or passing values at the command line.
 # -----------------------------------------------------------------------------
 
 # The suffix used for files that contain the hashes of dependencies.
@@ -25,7 +46,7 @@ HASHDEPS_QUIET ?=
 HASHDEPS_DISABLE ?=
 
 # INTERNALS -------------------------------------------------------------------
-# Users should not change anything below this line.
+# Users _must not_ change anything below this line!
 # -----------------------------------------------------------------------------
 
 # Do any sanity checks on variables up front.
@@ -51,9 +72,20 @@ HASHDEPS_HASH_TREE_SANITISED = \
 define hash_deps
     $(if $(HASHDEPS_DISABLE),\
 		$(1),\
-		$(foreach dep,\
-			$(1),\
-			$(HASHDEPS_HASH_TREE_SANITISED)$(dep)$(HASHDEPS_HASH_SUFFIX)))
+		$(patsubst %,\
+			$(HASHDEPS_HASH_TREE_SANITISED)%$(HASHDEPS_HASH_SUFFIX),\
+			$(1)))
+endef
+
+# Function that undoes the transformations above, so lets you access the
+# true dependency files in recipes.
+# Takes one argument - a space separated list of dependencies to convert.
+define unhash_deps
+    $(if $(HASHDEPS_DISABLE),\
+		$(1),\
+		$(patsubst $(HASHDEPS_HASH_TREE_SANITISED)%$(HASHDEPS_HASH_SUFFIX),\
+			%,\
+			$(1)))
 endef
 
 # Make will delete files created by pattern rules by default - prevent this.

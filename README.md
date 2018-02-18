@@ -70,7 +70,9 @@ Starting with:
 ```makefile
 combined.txt: a.txt b.txt
     echo "Concatenating files"
-    cat a.txt b.txt > combined.txt
+    cat $^ > $@
+    # The make syntax for:
+    # cat a.txt b.txt > combined.txt
 ```
 
 All that needs to be done is include the makefile and pass the dependencies to hash to the `hash_deps` function.
@@ -84,7 +86,7 @@ include hashdeps.mk
 # only echo-es once, the first time.
 combined.txt: $(call hash_deps,a.txt b.txt)
     echo "Concatenating files"
-    cat a.txt b.txt > combined.txt
+    cat $(call unhash_deps,$^) > combined.txt
 ```
 
 ## Development
