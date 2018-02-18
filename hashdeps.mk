@@ -5,12 +5,15 @@
 
 # The suffix used for files that contain the hashes of dependencies.
 # Can be changed if desired, but must be unique to files created by this
-# utility.
+# utility. It _cannot_ be blank, and should include any starting `.`.
 HASHDEPS_HASH_SUFFIX ?= .dephash
 
 # Specify a directory to store hashes in rather than putting them alongside
 # dependency files, which could otherwise undedsirably pollute the source tree.
 # Leave blank to just out hash files alongside dependency files.
+# E.g. the following setting would store the hash for `source/file.txt` as
+# `hashtree/source/file.txt.dephash`:
+# HASHDEPS_HASH_TREE_DIR := hashtree
 HASHDEPS_HASH_TREE_DIR ?=
 
 # Set this variable to some non-whitespace value to disable any echoing by
@@ -24,6 +27,12 @@ HASHDEPS_DISABLE ?=
 # INTERNALS -------------------------------------------------------------------
 # Users should not change anything below this line.
 # -----------------------------------------------------------------------------
+
+# Do any sanity checks on variables up front.
+ifeq ($(strip $(HASHDEPS_HASH_SUFFIX)),)
+$(error The suffix for dependency hash files (HASHDEPS_HASH_SUFFIX) cannot\
+		be blank)
+endif
 
 # Either actually echo or just use true, which 'does nothing, successfully'.
 ifeq ($(strip $(HASHDEPS_QUIET)),)

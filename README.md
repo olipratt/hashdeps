@@ -50,6 +50,15 @@ Suppose you have a CI system that builds objects and can cache the objects betwe
 
 - While this utility helps speed up build times in the main uses cases covered above, in completely clean builds there will be the overhead of computing hashes on top of any usual building work and so these will almost certainly be some amount slower.
 
+### Features
+
+Users of this utility can set various configuration variables - e.g. by setting the variables _before_ including the provided makefile, or at the command line call to make. For example:
+
+- A simple flag to disable this utility from doing anything.
+- Change the filenames used for storing file hashes, and storing them separate from source files.
+
+...and more. All configuration variables are documented at the start of the `hashdeps.mk` file.
+
 ## Simple Examples
 
 See the unit test files for other examples of this utility in use.
@@ -77,22 +86,6 @@ combined.txt: $(call hash_deps,a.txt b.txt)
     echo "Concatenating files"
     cat a.txt b.txt > combined.txt
 ```
-
-## Configuration
-
-The following configuration can be set by users of this utility - e.g. by setting the variables _before_ including the provided makefile, or at the command line call to make.
-
-- Set the suffix used for files containing dependency hashes by setting the following variable. The suffix must be unique to files created by this utility, cannot be blank, and should include any starting `.`.
-
-    ```makefile
-    HASHDEPS_HASH_SUFFIX := .dephash
-    ```
-
-- Store file hashes in a separate directory tree (e.g. to avoid polluting the source tree) - otherwise by default hashes are stored in files alongside the dependency files. The following setting would store the hash for `source/file.txt` as `hashtree/source/file.txt.dephash`.
-
-    ```makefile
-    HASHDEPS_HASH_TREE_DIR := hashtree
-    ```
 
 ## Development
 

@@ -163,6 +163,14 @@ test_disabling()
     assertEquals "Second make failed" 2 "$(wc -l < file2.tmp)"
 }
 
+test_err_on_blank_suffix()
+{
+    # Make the file, which will create it with one line.
+    touch file1.tmp
+    make -f mainline.mk file2.tmp HASHDEPS_HASH_SUFFIX= 2>/dev/null
+    assertTrue "Blank suffix didn't fail" "(( $? != 0 ))"
+}
+
 # Cope with Shellcheck not being able to find the shunit file.
 # shellcheck disable=SC1091
 . shunit2
