@@ -17,6 +17,10 @@ HASHDEPS_HASH_TREE_DIR ?=
 # recipes in this utility.
 HASHDEPS_QUIET ?=
 
+# Set this to a non-whitespace value to disable all dependency hashing logic
+# from this utility.
+HASHDEPS_DISABLE ?=
+
 # INTERNALS -------------------------------------------------------------------
 # Users should not change anything below this line.
 # -----------------------------------------------------------------------------
@@ -36,7 +40,11 @@ HASHDEPS_HASH_TREE_SANITISED = \
 # Function to convert a normal dependency to a hashed dependency.
 # Takes one argument - a space separated list of dependencies to convert.
 define hash_deps
-    $(foreach dep,$(1),$(HASHDEPS_HASH_TREE_SANITISED)$(dep)$(HASHDEPS_HASH_SUFFIX))
+    $(if $(HASHDEPS_DISABLE),\
+		$(1),\
+		$(foreach dep,\
+			$(1),\
+			$(HASHDEPS_HASH_TREE_SANITISED)$(dep)$(HASHDEPS_HASH_SUFFIX)))
 endef
 
 # Make will delete files created by pattern rules by default - prevent this.

@@ -148,6 +148,21 @@ test_clean_hash_dir()
     assertTrue "Didn't delete hash files" "(( $? != 0 ))"
 }
 
+test_disabling()
+{
+    # Make the file, which will create it with one line.
+    touch file1.tmp
+    make -f mainline.mk file2.tmp HASHDEPS_DISABLE=y
+    assertEquals "First make failed" 1 "$(wc -l < file2.tmp)"
+    find . -name '*.dephash' | grep -q '.'
+    assertTrue "Still created hash files" "(( $? != 0 ))"
+
+    # Touch the dependency and re-make the file - it should be updated.
+    touch file1.tmp
+    make -f mainline.mk file2.tmp HASHDEPS_DISABLE=y
+    assertEquals "Second make failed" 2 "$(wc -l < file2.tmp)"
+}
+
 # Cope with Shellcheck not being able to find the shunit file.
 # shellcheck disable=SC1091
 . shunit2
