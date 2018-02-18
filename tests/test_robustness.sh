@@ -85,4 +85,27 @@ test_whitespace_in_hash_file()
     assert_file_made_n_times ${TARGET_1_TARGET} 1
 }
 
+# If for whatever reason the target file is significantly older than the
+# dependency and hash files but the hash of the dependency hasn't changed, then
+# the target still shouldn't be remade.
+# This is optional behaviour controlled by HASHDEPS_HASH_FILE_TIMESTAMP.
+test_old_target_modification_time()
+{
+    # First create a hash file, then empty it.
+    ${MAKE_CMD} ${TARGET_1_TARGET} HASHDEPS_HASH_FILE_TIMESTAMP='"5 years ago"'
+    assert_file_made_n_times ${TARGET_1_TARGET} 1
+
+    # Now change the target to be significantly older than the dependencies.
+    touch -d "2 hours ago" ${TARGET_1_TARGET}
+
+    # The target should still not be re-made.
+    ${MAKE_CMD} ${TARGET_1_TARGET} HASHDEPS_HASH_FILE_TIMESTAMP='"5 years ago"'
+    assert_file_made_n_times ${TARGET_1_TARGET} 1
+
+    # Modifying the dependency file will still re-make the target though.
+    edit_file_to_force_remake ${TARGET_1_DEPENDENCY}
+    ${MAKE_CMD} ${TARGET_1_TARGET} HASHDEPS_HASH_FILE_TIMESTAMP='"5 years ago"'
+    assert_file_made_n_times ${TARGET_1_TARGET} 2
+}
+
 . /usr/bin/shunit2

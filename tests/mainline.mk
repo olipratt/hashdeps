@@ -1,3 +1,5 @@
+# Disable all make's default implicit rules to make debug output more usable.
+.SUFFIXES:
 
 # The hashdeps makefile is in the parent directory of this file - this file's
 # location will be the last file in the MAKEFILE_LIST variable.
