@@ -43,9 +43,10 @@ test_empty_hash_file()
     assertTrue "Hash file not created" \
         "[ -f ${TARGET_1_DEPENDENCY}${DEFAULT_HASH_FILE_SUFFIX} ]"
     echo -n > ${TARGET_1_DEPENDENCY}${DEFAULT_HASH_FILE_SUFFIX}
-    # Also make sure the target is now newer than the hash file so it wouldn't
-    # normally be re-made.
-    touch ${TARGET_1_TARGET}
+    # Also move back the modification time so that it's not newer than the
+    # target which would force it to be remade.
+    touch --reference=${TARGET_1_TARGET} \
+        ${TARGET_1_DEPENDENCY}${DEFAULT_HASH_FILE_SUFFIX}
 
     # Now touch the file and re-make - the file should be remade, and the hash
     # file replaced.
@@ -71,11 +72,12 @@ test_whitespace_in_hash_file()
     assertTrue "Hash file not created" \
         "[ -f ${TARGET_1_DEPENDENCY}${DEFAULT_HASH_FILE_SUFFIX} ]"
     echo " " >> ${TARGET_1_DEPENDENCY}${DEFAULT_HASH_FILE_SUFFIX}
-    # Also make sure the target is now newer than the hash file so it wouldn't
-    # normally be re-made.
-    touch ${TARGET_1_TARGET}
+    # Also move back the modification time so that it's not newer than the
+    # target which would force it to be remade.
+    touch --reference=${TARGET_1_TARGET} \
+        ${TARGET_1_DEPENDENCY}${DEFAULT_HASH_FILE_SUFFIX}
 
-    # Now touch the file and re-make - the has should stil be valid and so the
+    # Now touch the file and re-make - the hash should stil be valid and so the
     # target should not be remade.
     touch ${TARGET_1_DEPENDENCY}
     ${MAKE_CMD} ${TARGET_1_TARGET}
