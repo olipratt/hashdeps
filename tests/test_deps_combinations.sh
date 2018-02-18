@@ -6,6 +6,8 @@
 # Define all the targets and their dependencies here.
 TARGET_2_TARGET=output2.tmp
 TARGET_2_DEPENDENCIES=(source1.tmp source2.tmp)
+TARGET_3_TARGET=output3.tmp
+TARGET_3_DEPENDENCIES=("${TARGET_2_DEPENDENCIES[@]}")
 
 # shunit2 function called before each test.
 setUp()
@@ -21,13 +23,12 @@ setUp()
     # Put some initial source files used by rules in place.
     for source_file in "${TARGET_2_DEPENDENCIES[@]}"
     do
-        echo "example source line" >> "${source_file}"
+        echo "example source line" > "${source_file}"
     done
 }
 
 test_touch_means_no_remake_two_deps()
 {
-    # Make the file, which will create it with one line.
     ${MAKE_CMD} ${TARGET_2_TARGET}
     assert_file_with_x_deps_made_n_times ${TARGET_2_TARGET} 2 1
 
@@ -39,7 +40,6 @@ test_touch_means_no_remake_two_deps()
 
 test_edit_means_remake_two_deps()
 {
-    # Make the file, which will create it with one line.
     ${MAKE_CMD} ${TARGET_2_TARGET}
     assert_file_with_x_deps_made_n_times ${TARGET_2_TARGET} 2 1
 
@@ -47,6 +47,24 @@ test_edit_means_remake_two_deps()
     edit_file_to_force_remake "${TARGET_2_DEPENDENCIES[0]}"
     ${MAKE_CMD} ${TARGET_2_TARGET}
     assert_file_with_x_deps_made_n_times ${TARGET_2_TARGET} 2 2
+}
+
+# Test a target where only the first dependency is hashed.
+test_touch_means_no_remake_mixed_deps()
+{
+    # Make the file, which will create it with one line.
+    ${MAKE_CMD} ${TARGET_3_TARGET}
+    assert_file_with_x_deps_made_n_times ${TARGET_3_TARGET} 2 1
+
+    # Touch the hashed dependency and re-make the file - it will be unchanged.
+    touch "${TARGET_3_DEPENDENCIES[0]}"
+    ${MAKE_CMD} ${TARGET_3_TARGET}
+    assert_file_with_x_deps_made_n_times ${TARGET_3_TARGET} 2 1
+
+    # Touch the un-hashed dependency and re-make the file - it will be re-made.
+    touch "${TARGET_3_DEPENDENCIES[1]}"
+    ${MAKE_CMD} ${TARGET_3_TARGET}
+    assert_file_with_x_deps_made_n_times ${TARGET_3_TARGET} 2 2
 }
 
 . /usr/bin/shunit2

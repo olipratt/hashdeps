@@ -46,19 +46,8 @@ any_hash_files_in_dir()
     return $?
 }
 
-# When a file is made, it gains a line of content, so use that to check how
-# many times a file has been made.
-assert_file_made_n_times()
-{
-    local filename=$1
-    local n=$2
-    local times_made
-    times_made=$(wc -l < "${filename}")
-    assertEquals "made ${times_made} times instead" "${n}" "${times_made}"
-}
-
-# When a file is made, it gains a line of content, so use that to check how
-# many times a file has been made.
+# When a file is made, it gains a line of content from each dependency, so use
+# that fact to check how many times a file has been made.
 assert_file_with_x_deps_made_n_times()
 {
     local filename=$1
@@ -66,6 +55,7 @@ assert_file_with_x_deps_made_n_times()
     local n=$3
     local num_lines
     num_lines=$(wc -l < "${filename}")
+    assertEquals "file doesn't have ${x} deps" "0" "$((num_lines % x))"
     local times_made=$(( num_lines / x ))
-    assertEquals "made ${times_made} times instead" "${n}" "${times_made}"
+    assertEquals "file made wrong number of times" "${n}" "${times_made}"
 }

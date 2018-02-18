@@ -39,7 +39,7 @@ test_empty_hash_file()
 {
     # First create a hash file, then empty it.
     ${MAKE_CMD} ${TARGET_1_TARGET}
-    assert_file_made_n_times ${TARGET_1_TARGET} 1
+    assert_file_with_x_deps_made_n_times ${TARGET_1_TARGET} 1 1
     assertTrue "Hash file not created" \
         "[ -f ${TARGET_1_DEPENDENCY}${DEFAULT_HASH_FILE_SUFFIX} ]"
     echo -n > ${TARGET_1_DEPENDENCY}${DEFAULT_HASH_FILE_SUFFIX}
@@ -53,13 +53,13 @@ test_empty_hash_file()
     touch ${TARGET_1_DEPENDENCY}
     ${MAKE_CMD} ${TARGET_1_TARGET}
     assertTrue "Make failed with empty hash" "$?"
-    assert_file_made_n_times ${TARGET_1_TARGET} 2
+    assert_file_with_x_deps_made_n_times ${TARGET_1_TARGET} 1 2
 
     # Now that the hash file is in place, another touch shouldn't cause the
     # target to be re-made a third time.
     touch ${TARGET_1_DEPENDENCY}
     ${MAKE_CMD} ${TARGET_1_TARGET}
-    assert_file_made_n_times ${TARGET_1_TARGET} 2
+    assert_file_with_x_deps_made_n_times ${TARGET_1_TARGET} 1 2
 }
 
 # It shouldn't be possible, but we should cope gracefully with any trailing
@@ -68,7 +68,7 @@ test_whitespace_in_hash_file()
 {
     # First create a hash file, then empty it.
     ${MAKE_CMD} ${TARGET_1_TARGET}
-    assert_file_made_n_times ${TARGET_1_TARGET} 1
+    assert_file_with_x_deps_made_n_times ${TARGET_1_TARGET} 1 1
     assertTrue "Hash file not created" \
         "[ -f ${TARGET_1_DEPENDENCY}${DEFAULT_HASH_FILE_SUFFIX} ]"
     echo " " >> ${TARGET_1_DEPENDENCY}${DEFAULT_HASH_FILE_SUFFIX}
@@ -82,7 +82,7 @@ test_whitespace_in_hash_file()
     touch ${TARGET_1_DEPENDENCY}
     ${MAKE_CMD} ${TARGET_1_TARGET}
     assertTrue "Make failed with extra whitespace in hash" "$?"
-    assert_file_made_n_times ${TARGET_1_TARGET} 1
+    assert_file_with_x_deps_made_n_times ${TARGET_1_TARGET} 1 1
 }
 
 # If for whatever reason the target file is significantly older than the
@@ -93,19 +93,19 @@ test_old_target_modification_time()
 {
     # First create a hash file, then empty it.
     ${MAKE_CMD} ${TARGET_1_TARGET} HASHDEPS_HASH_FILE_TIMESTAMP='"5 years ago"'
-    assert_file_made_n_times ${TARGET_1_TARGET} 1
+    assert_file_with_x_deps_made_n_times ${TARGET_1_TARGET} 1 1
 
     # Now change the target to be significantly older than the dependencies.
     touch -d "2 hours ago" ${TARGET_1_TARGET}
 
     # The target should still not be re-made.
     ${MAKE_CMD} ${TARGET_1_TARGET} HASHDEPS_HASH_FILE_TIMESTAMP='"5 years ago"'
-    assert_file_made_n_times ${TARGET_1_TARGET} 1
+    assert_file_with_x_deps_made_n_times ${TARGET_1_TARGET} 1 1
 
     # Modifying the dependency file will still re-make the target though.
     edit_file_to_force_remake ${TARGET_1_DEPENDENCY}
     ${MAKE_CMD} ${TARGET_1_TARGET} HASHDEPS_HASH_FILE_TIMESTAMP='"5 years ago"'
-    assert_file_made_n_times ${TARGET_1_TARGET} 2
+    assert_file_with_x_deps_made_n_times ${TARGET_1_TARGET} 1 2
 }
 
 . /usr/bin/shunit2

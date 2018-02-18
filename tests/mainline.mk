@@ -12,3 +12,8 @@ output1.tmp: $(call hash_deps,source1.tmp)
 # Same as above, except two hashed dependencies.
 output2.tmp: $(call hash_deps,source1.tmp source2.tmp)
 	@cat $(call unhash_deps,$^) >> $@
+
+# With only some dependencies hashed, show that make's built in variables used
+# to reference all dependencies of a recipe can safely be unhashed.
+output3.tmp: $(call hash_deps,source1.tmp) source2.tmp
+	@cat $(call unhash_deps,$^) >> $@
