@@ -30,7 +30,7 @@
 HASHDEPS_HASH_SUFFIX ?= .dephash
 
 # Specify a directory to store hashes in rather than putting them alongside
-# dependency files, which could otherwise undedsirably pollute the source tree.
+# dependency files, which could otherwise undesirably pollute the source tree.
 # Leave blank to just out hash files alongside dependency files.
 # E.g. the following setting would store the hash for `source/file.txt` as
 # `hashtree/source/file.txt.dephash`:
@@ -104,6 +104,7 @@ $(HASHDEPS_HASH_TREE_SANITISED)%$(HASHDEPS_HASH_SUFFIX): %
 # A 'clean' target that removes any generated hash files.
 # Delete any files with the unique hash file suffix, either anywhere in the
 # current directory or in the HASH_TREE_DIR if set.
+# Purposely echo the clean command so users can see what is being deleted.
 HASHDEPS_CLEAN_DIR = \
 	$(if $(HASHDEPS_HASH_TREE_SANITISED),$(HASHDEPS_HASH_TREE_SANITISED),.)
 HASHDEPS_CLEAN_CMD = \

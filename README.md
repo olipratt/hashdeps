@@ -86,7 +86,7 @@ include hashdeps.mk
 # only echo-es once, the first time.
 combined.txt: $(call hash_deps,a.txt b.txt)
     echo "Concatenating files"
-    cat $(call unhash_deps,$^) > combined.txt
+    cat $(call unhash_deps,$^) > $@
 ```
 
 ## Development
