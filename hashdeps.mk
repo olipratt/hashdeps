@@ -97,9 +97,12 @@ endef
 # some stderr text which we purposely ignore.
 $(HASHDEPS_HASH_TREE_SANITISED)%$(HASHDEPS_HASH_SUFFIX): %
 	@mkdir -p $(dir $@)
-	@{ md5sum -c $@ --status 2>/dev/null && \
-		$(HASHDEPS_ECHO) "Hash file still up to date: $@" ;} || \
-		{ $(HASHDEPS_ECHO) "Updating hash file: $@" && md5sum $< > $@; }
+	@curr_hash=$$(md5sum "$<" | cut -f 1 -d " ") && \
+		{ [ -f $@ ] && \
+			[ "$$(cat "$@")" = "$${curr_hash}" ] && \
+			$(HASHDEPS_ECHO) "Hash file still up to date: $@" ;} || \
+		{ $(HASHDEPS_ECHO) "Updating hash file: $@" && \
+			echo -n "$${curr_hash}" > $@ ; }
 
 # A 'clean' target that removes any generated hash files.
 # Delete any files with the unique hash file suffix, either anywhere in the

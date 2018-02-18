@@ -22,17 +22,6 @@ setUp()
     echo "example source line" >> "${TARGET_1_DEPENDENCY}"
 }
 
-# When a file is made, it gains a line of content, so use that to check how
-# many times a file has been made.
-assert_file_made_n_times()
-{
-    local filename=$1
-    local n=$2
-    local times_made
-    times_made=$(wc -l < "${filename}")
-    assertEquals "made ${times_made} times instead" "${n}" "${times_made}"
-}
-
 # -----
 # Tests
 # -----
@@ -123,13 +112,6 @@ test_disabling()
     ${MAKE_CMD} ${TARGET_1_TARGET} HASHDEPS_DISABLE=y
     assert_file_made_n_times ${TARGET_1_TARGET} 2
     assertFalse "Still created hash files" "any_hash_files_in_dir ."
-}
-
-test_err_on_blank_suffix()
-{
-    # A blank suffix should cause make to bail out with an error.
-    ${MAKE_CMD} ${TARGET_1_TARGET} HASHDEPS_HASH_SUFFIX= 2>/dev/null
-    assertTrue "Blank suffix didn't fail" "(( $? != 0 ))"
 }
 
 . /usr/bin/shunit2

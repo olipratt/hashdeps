@@ -25,19 +25,6 @@ setUp()
     done
 }
 
-# When a file is made, it gains a line of content, so use that to check how
-# many times a file has been made.
-assert_file_with_x_deps_made_n_times()
-{
-    local filename=$1
-    local x=$2
-    local n=$3
-    local num_lines
-    num_lines=$(wc -l < "${filename}")
-    local times_made=$(( num_lines / x ))
-    assertEquals "made ${times_made} times instead" "${n}" "${times_made}"
-}
-
 test_touch_means_no_remake_two_deps()
 {
     # Make the file, which will create it with one line.
