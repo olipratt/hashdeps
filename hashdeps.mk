@@ -10,7 +10,15 @@
 #
 # combined.txt: $(call hash_deps,a.txt b.txt)
 #    echo "Concatenating files"
-#    cat $(call unhash_deps,$^) > combined.txt
+#    cat $(call unhash_deps,$^) > $@
+#
+# It's also safe to only hash some dependencies (e.g. if you know that some
+# will always have correct timestamps relative to the target) but still apply
+# `unhash_deps` to all dependencies - e.g.:
+#
+# combined.txt: $(call hash_deps,a.txt) b.txt
+#    echo "Concatenating files"
+#    cat $(call unhash_deps,$^) > $@
 #
 # Note that these should not be used on PHONY dependencies, as it makes no
 # sense - they are not files that can be hashed, and always cause a target that
@@ -24,7 +32,7 @@
 # -----------------------------------------------------------------------------
 
 # The suffix used for files that contain the hashes of dependencies.
-# Can be changed if desired, but must be unique to files created by this
+# Can be changed if desired, but _must_ be unique to files created by this
 # utility. It _cannot_ be blank, and should include any starting `.`.
 HASHDEPS_HASH_SUFFIX ?= .dephash
 
