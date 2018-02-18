@@ -51,3 +51,15 @@ $(HASHDEPS_HASH_TREE_SANITISED)%$(HASHDEPS_HASH_SUFFIX): %
 	@{ md5sum -c $@ --status 2>/dev/null && \
 		$(HASHDEPS_ECHO) "Hash file still up to date: $@" ;} || \
 		{ $(HASHDEPS_ECHO) "Updating hash file: $@" && md5sum $< > $@; }
+
+# A 'clean' target that removes any generated hash files.
+# Delete any files with the unique hash file suffix, either anywhere in the
+# current directory or in the HASH_TREE_DIR if set.
+HASHDEPS_CLEAN_DIR = \
+	$(if $(HASHDEPS_HASH_TREE_SANITISED),$(HASHDEPS_HASH_TREE_SANITISED),.)
+HASHDEPS_CLEAN_CMD = \
+	find $(HASHDEPS_CLEAN_DIR) -name "*$(HASHDEPS_HASH_SUFFIX)" -delete
+.PHONY: hashdeps_clean
+hashdeps_clean:
+	@$(HASHDEPS_ECHO) "Removing all dependency file hashes"
+	$(HASHDEPS_CLEAN_CMD)

@@ -118,6 +118,36 @@ test_edit_means_remake_two_deps()
     assertEquals "First make failed" 2 "$(wc -l < file12.tmp)"
 }
 
+test_clean()
+{
+    # Make the file, which will create it with one line.
+    touch file1.tmp
+    make -f mainline.mk file2.tmp
+    # This finds any hash files and passes them to grep which will return
+    # success if there are any files, and failure if there are none.
+    find . -name '*.dephash' | grep -q '.'
+    assertTrue "Didn't create hash files" "(( $? == 0 ))"
+
+    make -f mainline.mk hashdeps_clean
+    find . -name '*.dephash' | grep -q '.'
+    assertTrue "Didn't delete hash files" "(( $? != 0 ))"
+}
+
+test_clean_hash_dir()
+{
+    # Make the file, which will create it with one line.
+    touch file1.tmp
+    make -f mainline.mk file2.tmp HASHDEPS_HASH_TREE_DIR=./hashes
+    assertTrue "Didn't create hash directory" "[ -d hashes ]"
+    find hashes -name '*.dephash' | grep -q '.'
+    assertTrue "Didn't create hash files" "(( $? == 0 ))"
+
+    make -f mainline.mk hashdeps_clean HASHDEPS_HASH_TREE_DIR=./hashes
+    assertTrue "Deleted hash directory" "[ -d hashes ]"
+    find hashes -name '*.dephash' | grep -q '.'
+    assertTrue "Didn't delete hash files" "(( $? != 0 ))"
+}
+
 # Cope with Shellcheck not being able to find the shunit file.
 # shellcheck disable=SC1091
 . shunit2
