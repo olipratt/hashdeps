@@ -1,7 +1,7 @@
 
 
 lint:
-	shellcheck tests/*.sh
+	cd tests && shellcheck -x *.sh
 
 mainline_tests:
 	cd tests && ./test_mainline.sh

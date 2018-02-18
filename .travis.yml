@@ -1,6 +1,12 @@
 language: bash
 before_install:
   - sudo apt-get -qq update
-  - sudo apt-get install -y shellcheck shunit2 make
+  - sudo apt-get install -y shunit2 make wget
+  # Get the latest shellcheck version for consistency.
+  - mkdir tmp_install_folder/
+  - wget -P tmp_install_folder/ https://storage.googleapis.com/shellcheck/shellcheck-latest.linux.x86_64.tar.xz
+  - tar xvf tmp_install_folder/shellcheck-latest.linux.x86_64.tar.xz -C tmp_install_folder
+  - cp tmp_install_folder/shellcheck-latest/shellcheck /usr/bin/shellcheck
+  - rm -rf tmp_install_folder
 script:
-  - make test
+  - make test -j $(nproc)

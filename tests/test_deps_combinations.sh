@@ -11,7 +11,7 @@ TARGET_2_DEPENDENCIES=(source1.tmp source2.tmp)
 setUp()
 {
     # Run all tests in a tmp dir.
-    cd "${SHUNIT_TMPDIR}"
+    cd "${SHUNIT_TMPDIR}" || exit
 
     # Clean any lingering files before a test.
     # There's no need to clean up at the end because the tmp dir is cleaned up
@@ -62,6 +62,4 @@ test_edit_means_remake_two_deps()
     assert_file_with_x_deps_made_n_times ${TARGET_2_TARGET} 2 2
 }
 
-# Cope with Shellcheck not being able to find the shunit file.
-# shellcheck disable=SC1091
-. shunit2
+. /usr/bin/shunit2

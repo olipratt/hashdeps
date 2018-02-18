@@ -11,7 +11,7 @@ TARGET_1_DEPENDENCY=source1.tmp
 setUp()
 {
     # Run all tests in a tmp dir.
-    cd "${SHUNIT_TMPDIR}"
+    cd "${SHUNIT_TMPDIR}" || exit
 
     # Clean any lingering files before a test.
     # There's no need to clean up at the end because the tmp dir is cleaned up
@@ -132,6 +132,4 @@ test_err_on_blank_suffix()
     assertTrue "Blank suffix didn't fail" "(( $? != 0 ))"
 }
 
-# Cope with Shellcheck not being able to find the shunit file.
-# shellcheck disable=SC1091
-. shunit2
+. /usr/bin/shunit2

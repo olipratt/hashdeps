@@ -91,6 +91,7 @@ combined.txt: $(call hash_deps,a.txt b.txt)
 
 ## Development
 
-Install `shunit2` and `shellcheck` using your system's package manager.
+- Install `shunit2` using your system's package manager.
+- See instructions [here](https://github.com/koalaman/shellcheck/issues/704#issuecomment-325983234) to get the latest `shellcheck` - typically the one in package managers is older and doesn't report all issues.
 
 Run tests with `make test`
