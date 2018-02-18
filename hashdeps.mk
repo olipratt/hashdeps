@@ -99,7 +99,7 @@ $(HASHDEPS_HASH_TREE_SANITISED)%$(HASHDEPS_HASH_SUFFIX): %
 	@mkdir -p $(dir $@)
 	@curr_hash=$$(md5sum "$<" | cut -f 1 -d " ") && \
 		{ [ -f $@ ] && \
-			[ "$$(cat "$@")" = "$${curr_hash}" ] && \
+			[ "$$(cat "$@" | tr -d '[:space:]')" = "$${curr_hash}" ] && \
 			$(HASHDEPS_ECHO) "Hash file still up to date: $@" ;} || \
 		{ $(HASHDEPS_ECHO) "Updating hash file: $@" && \
 			echo -n "$${curr_hash}" > $@ ; }
