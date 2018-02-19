@@ -44,13 +44,11 @@ test_empty_hash_file()
     # First create a hash file, then empty it.
     ${MAKE_CMD} ${TARGET_1_TARGET}
     assert_file_with_x_deps_made_n_times ${TARGET_1_TARGET} 1 1
-    assertTrue "Hash file not created" \
-        "[ -f ${TARGET_1_DEPENDENCY}${DEFAULT_HASH_FILE_SUFFIX} ]"
-    echo -n > ${TARGET_1_DEPENDENCY}${DEFAULT_HASH_FILE_SUFFIX}
+    assertTrue "Hash file not created" "[ -f ${TARGET_1_HASH_FILE} ]"
+    echo -n > ${TARGET_1_HASH_FILE}
     # Also move back the modification time so that it's not newer than the
     # target which would force it to be remade.
-    touch --reference=${TARGET_1_TARGET} \
-        ${TARGET_1_DEPENDENCY}${DEFAULT_HASH_FILE_SUFFIX}
+    touch --reference=${TARGET_1_TARGET} ${TARGET_1_HASH_FILE}
 
     # Now touch the file and re-make - the file should be remade, and the hash
     # file replaced.
@@ -68,48 +66,23 @@ test_empty_hash_file()
 
 # It shouldn't be possible, but we should cope gracefully with any trailing
 # whitespace ending up in the hash file.
-test_whitespace_in_hash_file()
+test_trailing_whitespace_in_hash_file()
 {
-    # First create a hash file, then empty it.
+    # First create a hash file, then append whitespace to it.
     ${MAKE_CMD} ${TARGET_1_TARGET}
     assert_file_with_x_deps_made_n_times ${TARGET_1_TARGET} 1 1
-    assertTrue "Hash file not created" \
-        "[ -f ${TARGET_1_DEPENDENCY}${DEFAULT_HASH_FILE_SUFFIX} ]"
-    echo " " >> ${TARGET_1_DEPENDENCY}${DEFAULT_HASH_FILE_SUFFIX}
+    assertTrue "Hash file not created" "[ -f ${TARGET_1_HASH_FILE} ]"
+    echo " " >> ${TARGET_1_HASH_FILE}
     # Also move back the modification time so that it's not newer than the
     # target which would force it to be remade.
-    touch --reference=${TARGET_1_TARGET} \
-        ${TARGET_1_DEPENDENCY}${DEFAULT_HASH_FILE_SUFFIX}
+    touch --reference=${TARGET_1_TARGET} ${TARGET_1_HASH_FILE}
 
-    # Now touch the file and re-make - the hash should stil be valid and so the
-    # target should not be remade.
+    # Now touch the file and re-make - the hash should still be valid and so
+    # the target should not be remade.
     touch ${TARGET_1_DEPENDENCY}
     ${MAKE_CMD} ${TARGET_1_TARGET}
     assertTrue "Make failed with extra whitespace in hash" "$?"
     assert_file_with_x_deps_made_n_times ${TARGET_1_TARGET} 1 1
-}
-
-# If for whatever reason the target file is significantly older than the
-# dependency and hash files but the hash of the dependency hasn't changed, then
-# the target still shouldn't be remade.
-# This is optional behaviour controlled by HASHDEPS_HASH_FILE_TIMESTAMP.
-test_old_target_modification_time()
-{
-    # First create a hash file, then empty it.
-    ${MAKE_CMD} ${TARGET_1_TARGET} HASHDEPS_FORCE_HASH=y
-    assert_file_with_x_deps_made_n_times ${TARGET_1_TARGET} 1 1
-
-    # Now change the target to be significantly older than the dependencies.
-    touch -d "2 hours ago" ${TARGET_1_TARGET}
-
-    # The target should still not be re-made.
-    ${MAKE_CMD} ${TARGET_1_TARGET} HASHDEPS_FORCE_HASH=y
-    assert_file_with_x_deps_made_n_times ${TARGET_1_TARGET} 1 1
-
-    # Modifying the dependency file will still re-make the target though.
-    edit_file_to_force_remake ${TARGET_1_DEPENDENCY}
-    ${MAKE_CMD} ${TARGET_1_TARGET} HASHDEPS_FORCE_HASH=y
-    assert_file_with_x_deps_made_n_times ${TARGET_1_TARGET} 1 2
 }
 
 . /usr/bin/shunit2

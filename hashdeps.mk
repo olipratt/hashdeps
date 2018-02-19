@@ -24,7 +24,11 @@
 # sense - they are not files that can be hashed, and always cause a target that
 # depends on them to be remade.
 #
-# There is configuration below to let you alter the behaviour of the utility.
+# There is configuration below to let you alter the behaviour of the utility,
+# but the defaults are chosen so that the utility should work fine as is.
+#
+# To remove any hash files previously created by the utility, make the
+# `hashdeps_clean` target.
 
 # CONFIGURATION ---------------------------------------------------------------
 # Users can override any of the following defaults e.g. by setting these
@@ -37,19 +41,29 @@
 HASHDEPS_HASH_SUFFIX ?= .dephash
 
 # Specify a directory to store hashes in rather than putting them alongside
-# dependency files, which could otherwise undesirably pollute the source tree.
+# dependency files, which might otherwise undesirably pollute the source tree.
 # Leave blank to just out hash files alongside dependency files.
 # E.g. the following setting would store the hash for `source/file.txt` as
 # `hashtree/source/file.txt.dephash`:
 # HASHDEPS_HASH_TREE_DIR := hashtree
+# This should be a relative path, and the directory will be created if it does
+# not exist.
 HASHDEPS_HASH_TREE_DIR ?=
 
 # Set this variable to some non-whitespace value to disable any echoing by
 # recipes in this utility.
+# By default a message is echoed every time a hash file is checked and found to
+# by up to date, or is regenerated.
 HASHDEPS_QUIET ?=
 
 # Set this to a non-whitespace value to disable all dependency hashing logic
 # from this utility.
+# Be careful about disabling this for a new build while hash files are present
+# because then the hash files will be out of sync with the built targets.
+# If you have previously built with hashdeps enabled, and are now going to
+# build with it disabled, you _should_ make the `hashdeps_clean` target to
+# remove any lingering hash files and prevent bad behaviour later if hashdeps
+# is re-enabled.
 HASHDEPS_DISABLE ?=
 
 # The default use case for this utility is when there are dependencies that
@@ -70,6 +84,13 @@ HASHDEPS_DISABLE ?=
 # the modification time of the hash file to decide if it should re-make the
 # target, rather than forcefully always re-making (and so re-calculating the
 # hashes to check) the hash files.
+#
+# In either case, it's assumed that the hash file is stored with the target
+# and it is always correct that the target was made with the dependency
+# contents matching the hash. This must be true because the hash is created as
+# part of creating the target.
+# The target somehow changing, but the hash and dependency content still
+# matching is not considered at all as a case to handle.
 HASHDEPS_FORCE_HASH ?=
 
 # The default value here should always be fine, but is configurable in case.

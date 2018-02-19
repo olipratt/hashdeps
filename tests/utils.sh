@@ -19,6 +19,7 @@ export HASH_DIR_NAME=hashes
 # Define all the targets and their dependencies in the test makefile.
 export TARGET_1_TARGET=output1.tmp
 export TARGET_1_DEPENDENCY=source1.tmp
+export TARGET_1_HASH_FILE=source1.tmp${DEFAULT_HASH_FILE_SUFFIX}
 export TARGET_2_TARGET=output2.tmp
 export TARGET_2_DEPENDENCIES=(source1.tmp source2.tmp)
 export TARGET_3_TARGET=output3.tmp
