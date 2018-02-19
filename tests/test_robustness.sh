@@ -1,21 +1,16 @@
 #! /bin/bash
 # Tests of edge case and error behaviour.
 
-. utils.sh
-
-# Define all the targets and their dependencies here.
-TARGET_1_TARGET=output1.tmp
-TARGET_1_DEPENDENCY=source1.tmp
+. ./utils.sh
 
 # shunit2 function called before each test.
 setUp()
 {
-    # Run all tests in a tmp dir.
+    # Run all tests in a tmp dir. This way there's no need to clean up at the
+    # end because the tmp dir is cleaned up by shunit2 itself.
     cd "${SHUNIT_TMPDIR}" || exit
 
     # Clean any lingering files before a test.
-    # There's no need to clean up at the end because the tmp dir is cleaned up
-    # by shunit2 itself.
     clean_tmp_files
 
     # Put some initial source files used by rules in place.

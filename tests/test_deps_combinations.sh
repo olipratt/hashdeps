@@ -1,13 +1,7 @@
 #! /bin/bash
 # Tests of multiple dependencies and combinations of dependency types.
 
-. utils.sh
-
-# Define all the targets and their dependencies here.
-TARGET_2_TARGET=output2.tmp
-TARGET_2_DEPENDENCIES=(source1.tmp source2.tmp)
-TARGET_3_TARGET=output3.tmp
-TARGET_3_DEPENDENCIES=("${TARGET_2_DEPENDENCIES[@]}")
+. ./utils.sh
 
 # shunit2 function called before each test.
 setUp()
@@ -21,9 +15,9 @@ setUp()
     clean_tmp_files
 
     # Put some initial source files used by rules in place.
-    for source_file in "${TARGET_2_DEPENDENCIES[@]}"
+    for dep_file in "${TARGET_2_DEPENDENCIES[@]} ${TARGET_3_DEPENDENCIES[@]}"
     do
-        echo "example source line" > "${source_file}"
+        echo "example source line" > "${dep_file}"
     done
 }
 

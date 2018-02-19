@@ -1,11 +1,7 @@
 #! /bin/bash
 # Tests of basic, mainline behaviour.
 
-. utils.sh
-
-# Define all the targets and their dependencies here.
-TARGET_1_TARGET=output1.tmp
-TARGET_1_DEPENDENCY=source1.tmp
+. ./utils.sh
 
 # shunit2 function called before each test.
 setUp()

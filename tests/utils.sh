@@ -16,6 +16,14 @@ export DEFAULT_HASH_FILE_SUFFIX=.dephash
 # A simple name to use for a separate directory to store hashes if needed.
 export HASH_DIR_NAME=hashes
 
+# Define all the targets and their dependencies in the test makefile.
+export TARGET_1_TARGET=output1.tmp
+export TARGET_1_DEPENDENCY=source1.tmp
+export TARGET_2_TARGET=output2.tmp
+export TARGET_2_DEPENDENCIES=(source1.tmp source2.tmp)
+export TARGET_3_TARGET=output3.tmp
+export TARGET_3_DEPENDENCIES=("${TARGET_2_DEPENDENCIES[@]}")
+
 # All tests should only create files with the suffixes covered here so that
 # they are always cleaned up.
 clean_tmp_files()
