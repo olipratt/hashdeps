@@ -4,9 +4,12 @@
 # The basic make command with any standard arguments.
 # For the tests, disable makefiles from printing their working directory as it
 # produces too much stdout spam.
+# Similarly, make hashdeps itself quiet by default to reduce spam. This can be
+# overridden when writing a test by adding `HASHDEPS_QUIET=` to the end of a
+# make command.
 # Also disable any makeflags in case e.g. tests are being run through make.
 export MAKEFLAGS=
-export MAKE_CMD="make -f ${PWD}/Makefile --no-print-directory"
+export MAKE_CMD="make -f ${PWD}/Makefile --no-print-directory HASHDEPS_QUIET=y"
 
 # The default suffix used for dependency hashes.
 export DEFAULT_HASH_FILE_SUFFIX=.dephash

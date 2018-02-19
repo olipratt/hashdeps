@@ -107,7 +107,8 @@ HASHDEPS_HASH_TREE_SANITISED := \
 # If we are changing the modification times of hash files, need to always run
 # the rules for them since that's where the times are set. Do that by making
 # them depend on the special `FORCE` target to force them to be run.
-HASHDEPS_MAYBE_FORCE_DEP := $(if $(HASHDEPS_HASH_FILE_TIMESTAMP),HASHDEPS_FORCE_TARGET,)
+HASHDEPS_MAYBE_FORCE_DEP := \
+	$(if $(HASHDEPS_HASH_FILE_TIMESTAMP),HASHDEPS_FORCE_TARGET,)
 
 # Function to convert a normal dependency to a hashed dependency.
 # Takes one argument - a space separated list of dependencies to convert.
@@ -160,5 +161,6 @@ hashdeps_clean:
 	@$(HASHDEPS_ECHO) "Removing all dependency file hashes"
 	$(HASHDEPS_CLEAN_CMD)
 
+# An empty phony target that can be set as a dependency to force rebuilding.
 .PHONY: HASHDEPS_FORCE_TARGET
 HASHDEPS_FORCE_TARGET:
