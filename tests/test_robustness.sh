@@ -28,6 +28,15 @@ test_err_on_blank_suffix()
     assertTrue "Blank suffix didn't fail" "(( $? != 0 ))"
 }
 
+# A blank timestamp should be rejected when forcing hash generation and cause
+# make to bail out with an error.
+test_err_on_blank_timestamp_when_forcing()
+{
+    ${MAKE_CMD} ${TARGET_1_TARGET} HASHDEPS_FORCE_HASH=y \
+        HASHDEPS_HASH_FILE_TIMESTAMP= 2>/dev/null
+    assertTrue "Blank timestamp when forcing didn't fail" "(( $? != 0 ))"
+}
+
 # Handle a simple case where a hash file gets corrupted (e.g. empty because
 # a write failed or similar).
 test_empty_hash_file()
@@ -87,19 +96,19 @@ test_whitespace_in_hash_file()
 test_old_target_modification_time()
 {
     # First create a hash file, then empty it.
-    ${MAKE_CMD} ${TARGET_1_TARGET} HASHDEPS_HASH_FILE_TIMESTAMP='"5 years ago"'
+    ${MAKE_CMD} ${TARGET_1_TARGET} HASHDEPS_FORCE_HASH=y
     assert_file_with_x_deps_made_n_times ${TARGET_1_TARGET} 1 1
 
     # Now change the target to be significantly older than the dependencies.
     touch -d "2 hours ago" ${TARGET_1_TARGET}
 
     # The target should still not be re-made.
-    ${MAKE_CMD} ${TARGET_1_TARGET} HASHDEPS_HASH_FILE_TIMESTAMP='"5 years ago"'
+    ${MAKE_CMD} ${TARGET_1_TARGET} HASHDEPS_FORCE_HASH=y
     assert_file_with_x_deps_made_n_times ${TARGET_1_TARGET} 1 1
 
     # Modifying the dependency file will still re-make the target though.
     edit_file_to_force_remake ${TARGET_1_DEPENDENCY}
-    ${MAKE_CMD} ${TARGET_1_TARGET} HASHDEPS_HASH_FILE_TIMESTAMP='"5 years ago"'
+    ${MAKE_CMD} ${TARGET_1_TARGET} HASHDEPS_FORCE_HASH=y
     assert_file_with_x_deps_made_n_times ${TARGET_1_TARGET} 1 2
 }
 

@@ -52,23 +52,39 @@ HASHDEPS_QUIET ?=
 # from this utility.
 HASHDEPS_DISABLE ?=
 
-# This is the modification time that is set on the hash file if the hash has
-# not changed, to prevent the target from being re-made in case the hash
-# file is now newer.
+# The default use case for this utility is when there are dependencies that
+# end up with modification times newer than the targets that depend on them,
+# and the user wants to prevent wasted rebuilding when it's not needed.
+# You should use this if you can guarantee that:
+# - hash files always have modification time older than the targets that
+#   depend on them (i.e. hash files are always stored with target files).
+# - dependencies will only ever end up with newer timestamps - never will a
+#   dependency file be modified and then set to have a modification time of
+#   earlier than that of the hash file previously generated.
+#
+# Set this to a non-empty value to force the hash to always be generated and
+# checked for a dependency. This is useful if you can make no guarantees about
+# timestamps of files - e.g. perhaps a target can end up with a timestamp
+# newer than a dependency while actually the target still needs regenerating.
+# The default case has the added benefit that it's faster since make will check
+# the modification time of the hash file to decide if it should re-make the
+# target, rather than forcefully always re-making (and so re-calculating the
+# hashes to check) the hash files.
+HASHDEPS_FORCE_HASH ?=
+
+# The default value here should always be fine, but is configurable in case.
+# When forcing hash file generation, this is the modification time that is set
+# on the hash file if the hash has not changed, to prevent the target from
+# being re-made in case the hash file is now newer.
 # We can't access the modification times of all targets that are being made
 # that depend on the hashed dependency, so we have to guess at a time in the
-# past.
-# This is passed to `touch -d` so can be a datestamp or something like
+# past that will be older than the target's modification time.
+# This is passed to `touch -d` so can be a datestamp or something relative like
 # 'HASHDEPS_HASH_FILE_TIMESTAMP := "5 years ago"'
 # (note that this is passed to the shell as-is so quotes are important).
-# It can be left blank if you don't want this behaviour and can rely on the
-# hash files always being older than the targets that depend on them (e.g.
-# if the hash files are stored with the built objects and it's just the source
-# file dependencies that might be newer). This default case has the added
-# benefit that it's faster since we will check the modification time of the
-# hash file to decide if we should re-make the target, rather than forcefully
-# always re-making (and so re-calculating the hashes to check) the hash files.
-HASHDEPS_HASH_FILE_TIMESTAMP ?=
+# This does nothing if `HASHDEPS_FORCE_HASH` is not set, and cannot be blank if
+# `HASHDEPS_FORCE_HASH` is not set
+HASHDEPS_HASH_FILE_TIMESTAMP ?= "5 years ago"
 
 # This is the program used to create a hash of a file.
 # It must:
@@ -92,6 +108,14 @@ $(error The suffix for dependency hash files (HASHDEPS_HASH_SUFFIX) cannot\
 		be blank)
 endif
 
+ifneq ($(strip $(HASHDEPS_FORCE_HASH)),)
+ifeq ($(strip $(HASHDEPS_HASH_FILE_TIMESTAMP)),)
+$(error The timestamp to set on hash files when the hash is unchanged\
+		(HASHDEPS_HASH_FILE_TIMESTAMP) cannot be blank when configured to\
+		force hash file generation (HASHDEPS_FORCE_HASH))
+endif
+endif
+
 # Either actually echo or just use true, which 'does nothing, successfully'.
 ifeq ($(strip $(HASHDEPS_QUIET)),)
 HASHDEPS_ECHO := echo
@@ -107,8 +131,7 @@ HASHDEPS_HASH_TREE_SANITISED := \
 # If we are changing the modification times of hash files, need to always run
 # the rules for them since that's where the times are set. Do that by making
 # them depend on the special `FORCE` target to force them to be run.
-HASHDEPS_MAYBE_FORCE_DEP := \
-	$(if $(HASHDEPS_HASH_FILE_TIMESTAMP),HASHDEPS_FORCE_TARGET,)
+HASHDEPS_MAYBE_FORCE_DEP := $(if $(HASHDEPS_FORCE_HASH),HASHDEPS_FORCE_TARGET,)
 
 # Function to convert a normal dependency to a hashed dependency.
 # Takes one argument - a space separated list of dependencies to convert.
@@ -142,7 +165,7 @@ $(HASHDEPS_HASH_TREE_SANITISED)%$(HASHDEPS_HASH_SUFFIX): % $(HASHDEPS_MAYBE_FORC
 	@curr_hash=$$($(HASHDEPS_HASH_CMD) "$<" | cut -f 1 -d " ") && \
 		{ [ -f "$@" ] && \
 			[ "$$(cat "$@" | tr -d '[:space:]')" = "$${curr_hash}" ] && \
-			$(if $(HASHDEPS_HASH_FILE_TIMESTAMP),\
+			$(if $(HASHDEPS_FORCE_HASH),\
 				touch -d $(HASHDEPS_HASH_FILE_TIMESTAMP) "$@" &&,) \
 			$(HASHDEPS_ECHO) "Hash file still up to date: $@" ;} || \
 		{ $(HASHDEPS_ECHO) "Updating hash file: $@" && \
