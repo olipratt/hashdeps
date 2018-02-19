@@ -1,4 +1,6 @@
-# Disable all make's default implicit rules to make debug output more usable.
+# Makefile containing all rules used for unit test targets.
+
+# Disable all make's default implicit rules so its debug output is more usable.
 .SUFFIXES:
 
 # The hashdeps makefile is in the parent directory of this file - this file's

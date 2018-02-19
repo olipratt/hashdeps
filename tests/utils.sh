@@ -6,7 +6,7 @@
 # produces too much stdout spam.
 # Also disable any makeflags in case e.g. tests are being run through make.
 export MAKEFLAGS=
-export MAKE_CMD="make -f ${PWD}/mainline.mk --no-print-directory"
+export MAKE_CMD="make -f ${PWD}/Makefile --no-print-directory"
 
 # The default suffix used for dependency hashes.
 export DEFAULT_HASH_FILE_SUFFIX=.dephash
