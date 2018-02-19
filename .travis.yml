@@ -6,7 +6,6 @@ addons:
   apt:
     packages:
       - shunit2
-      - shellcheck
 
 script:
   - make test -j $(nproc)
