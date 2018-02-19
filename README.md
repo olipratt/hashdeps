@@ -27,9 +27,9 @@ Suppose you have a CI system that builds objects and can cache the objects betwe
 
 ## Requirements
 
-- Should support any version of GNU make.
-- Requires the `md5sum` utility to be installed.
-- Only has Linux support currently, and only tested with the `bash` shell.
+- Should have no requirement on the version of GNU make.
+- Requires the `md5sum` utility to be installed - installable as [coreutils](https://www.gnu.org/software/coreutils/coreutils.html) in package managers.
+- Only has Linux support currently.
 
 ## Usage
 
@@ -46,18 +46,18 @@ Suppose you have a CI system that builds objects and can cache the objects betwe
 
 ### More Information on Usage
 
-- This utility takes the [md5sum](https://linux.die.net/man/1/md5sum) of dependencies to determine if they have changed, and should be sufficiently unique for most use cases.
+- This utility takes the [md5sum](https://linux.die.net/man/1/md5sum) of dependencies to determine if they have changed, and should be sufficiently unique for most use cases. This can easily be replaced with e.g. [sha256sum](https://linux.die.net/man/1/sha256sum) via a simple config option if desired, but there's nothing cryptographically secure about this tool.
 
 - While this utility helps speed up build times in the main uses cases covered above, in completely clean builds there will be the overhead of computing hashes on top of any usual building work and so these will almost certainly be some amount slower.
 
-### Features
+### Configuration
 
-Users of this utility can set various configuration variables - e.g. by setting the variables _before_ including the provided makefile, or at the command line call to make. For example:
+Users can set various configuration variables - e.g. by setting the variables _before_ including the provided makefile, or at the command line call to make. For example:
 
 - A simple flag to disable this utility from doing anything.
 - Change the filenames used for storing file hashes, and storing them separate from source files.
 
-...and more. All configuration variables are documented at the start of the `hashdeps.mk` file.
+...and more. All configuration variables are documented at the start of the `hashdeps.mk` file to keep the docs in one location.
 
 ## Simple Examples
 

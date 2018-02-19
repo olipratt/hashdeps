@@ -70,6 +70,18 @@ HASHDEPS_DISABLE ?=
 # always re-making (and so re-calculating the hashes to check) the hash files.
 HASHDEPS_HASH_FILE_TIMESTAMP ?=
 
+# This is the program used to create a hash of a file.
+# It must:
+# - accept a filename to provide the hash of as a positional argument
+# - output the hash to stdout with no preceeding text - either as the only
+#   output or optionally followed by a space and then anything else.
+# Example other programs that can be used are `sha1sum` and `sha256sum`.
+# `md5sum` is the default because it's widely available, should be the fastest,
+# provides a small hash to check, and there's no concern here about someone
+# crafting collisions since nothing here is meant to  be cryptographically
+# secure in any way.
+HASHDEPS_HASH_CMD ?= md5sum
+
 # INTERNALS -------------------------------------------------------------------
 # Users _must not_ change anything below this line!
 # -----------------------------------------------------------------------------
@@ -121,13 +133,12 @@ endef
 # Make will delete files created by pattern rules by default - prevent this.
 .PRECIOUS: %$(HASHDEPS_HASH_SUFFIX)
 
-# Check if the file md5sum in the file is still accurate. If not, write an
-# updated sum.
-# If the file doesn't exist, md5sum returns an error status code, and prints
-# some stderr text which we purposely ignore.
+# Check if the file hash in the file is still accurate. If not, write an
+# updated hash.
+# The dependency used as the input file is guaranteed to exist by make.
 $(HASHDEPS_HASH_TREE_SANITISED)%$(HASHDEPS_HASH_SUFFIX): % $(HASHDEPS_MAYBE_FORCE_DEP)
 	@mkdir -p $(dir $@)
-	@curr_hash=$$(md5sum "$<" | cut -f 1 -d " ") && \
+	@curr_hash=$$($(HASHDEPS_HASH_CMD) "$<" | cut -f 1 -d " ") && \
 		{ [ -f "$@" ] && \
 			[ "$$(cat "$@" | tr -d '[:space:]')" = "$${curr_hash}" ] && \
 			$(if $(HASHDEPS_HASH_FILE_TIMESTAMP),\

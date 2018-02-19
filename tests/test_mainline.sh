@@ -114,4 +114,24 @@ test_disabling()
     assertFalse "Still created hash files" "any_hash_files_in_dir ."
 }
 
+# Just check everything works as expected with a different hashing command, but
+# don't go as far as checking it's actually being used to create the hash as it
+# isn't worth the effort and will make the test fragile.
+test_touch_means_no_remake_sha1sum()
+{
+    # Make the target to create the default hash.
+    ${MAKE_CMD} ${TARGET_1_TARGET}
+    assert_file_with_x_deps_made_n_times ${TARGET_1_TARGET} 1 1
+
+    # Touch and make with a new hash command, which should force a build.
+    touch ${TARGET_1_DEPENDENCY}
+    ${MAKE_CMD} ${TARGET_1_TARGET} HASHDEPS_HASH_CMD=sha1sum
+    assert_file_with_x_deps_made_n_times ${TARGET_1_TARGET} 1 2
+
+    # Touch and make with the same hash command - there should be no rebuild.
+    touch ${TARGET_1_DEPENDENCY}
+    ${MAKE_CMD} ${TARGET_1_TARGET} HASHDEPS_HASH_CMD=sha1sum
+    assert_file_with_x_deps_made_n_times ${TARGET_1_TARGET} 1 2
+}
+
 . /usr/bin/shunit2

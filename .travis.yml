@@ -1,7 +1,7 @@
 language: bash
 before_install:
   - sudo apt-get -qq update
-  - sudo apt-get install -y shunit2 make wget
+  - sudo apt-get install -y shunit2 make wget coreutils
   # Get the latest shellcheck version for consistency.
   - mkdir tmp_install_folder/
   - wget -P tmp_install_folder/ https://storage.googleapis.com/shellcheck/shellcheck-latest.linux.x86_64.tar.xz
