@@ -13,17 +13,10 @@ export DEFAULT_HASH_FILE_SUFFIX=.dephash
 # A simple name to use for a separate directory to store hashes if needed.
 export HASH_DIR_NAME=hashes
 
-# Use a log function rather than echo so we have better output control.
-log()
-{
-    echo "$@"
-}
-
 # All tests should only create files with the suffixes covered here so that
 # they are always cleaned up.
 clean_tmp_files()
 {
-    log "Cleaning tmp files..."
     rm -f -- *.tmp *"${DEFAULT_HASH_FILE_SUFFIX}"
     rm -fr -- "${HASH_DIR_NAME}"
 }
