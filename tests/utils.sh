@@ -32,6 +32,9 @@ export TARGET_4_C_FILE=c_source.c
 export TARGET_4_H_FILE=c_source.h
 export TARGET_4_D_FILE=c_source.d
 
+export TARGET_5_TARGET=output5.tmp
+export TARGET_5_C_FILE=c_source_5.c
+
 prepare_and_cd_to_test_temp_dir()
 {
     # Run all tests in a tmp dir - shunit2 provides one for us.

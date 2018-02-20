@@ -64,3 +64,33 @@ output4.tmp: $(call hash_deps,$(TARGET_4_OBJS))
 %.o : $(call hash_deps,%.c %.d)
 	@echo Compiling: $(call unhash_deps,$<) into $@
 	@$(CC) -fPIC -o $@ -c $(call unhash_deps,$<)
+
+# Similar to the above, but in this case a test where a C source file has many
+# headers so that the entry for it in the dependency file spans many lines to
+# check that `hash_deps_in_autogen_dep_file` handles it correctly.
+TARGET_5_SOURCE_FILE := c_source_5.c
+# Create a sequence of header files that each just define a function prototype,
+# and add an include line for each one in the single source file.
+TARGET_5_HDR_FILE_GEN_CMD = $(foreach idx,\
+	$(shell seq -s " " 1 10),\
+	echo 'int fn_$(idx)(void);' > c_source_5_$(idx).h && \
+	echo '\#include "c_source_5_$(idx).h"' >> $(TARGET_5_SOURCE_FILE);)
+
+output5.tmp_sources:
+	@echo                          > $(TARGET_5_SOURCE_FILE)
+	@$(TARGET_5_HDR_FILE_GEN_CMD)
+	@echo 'int main() {'          >> $(TARGET_5_SOURCE_FILE)
+	@echo '  return fn_1();'      >> $(TARGET_5_SOURCE_FILE)
+	@echo '}'                     >> $(TARGET_5_SOURCE_FILE)
+	@echo 'int fn_1(void) {'      >> $(TARGET_5_SOURCE_FILE)
+	@echo '  return 1;'           >> $(TARGET_5_SOURCE_FILE)
+	@echo '}'                     >> $(TARGET_5_SOURCE_FILE)
+
+TARGET_5_SRCS:=$(TARGET_5_SOURCE_FILE)
+TARGET_5_OBJS:=$(TARGET_5_SRCS:%.c=%.o)
+-include $(TARGET_5_OBJS:%.o=%.d)
+
+output5.tmp: $(call hash_deps,$(TARGET_5_OBJS))
+	@echo Linking: $(call unhash_deps,$^) into $@
+	@$(CC) -o $@.exe $(call unhash_deps,$^)
+	@echo "This is a line of source" >> $@
