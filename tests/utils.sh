@@ -20,10 +20,17 @@ export HASH_DIR_NAME=hashes
 export TARGET_1_TARGET=output1.tmp
 export TARGET_1_DEPENDENCY=source1.tmp
 export TARGET_1_HASH_FILE=source1.tmp${DEFAULT_HASH_FILE_SUFFIX}
+
 export TARGET_2_TARGET=output2.tmp
 export TARGET_2_DEPENDENCIES=(source1.tmp source2.tmp)
+
 export TARGET_3_TARGET=output3.tmp
 export TARGET_3_DEPENDENCIES=("${TARGET_2_DEPENDENCIES[@]}")
+
+export TARGET_4_TARGET=output4.tmp
+export TARGET_4_C_FILE=c_source.c
+export TARGET_4_H_FILE=c_source.h
+export TARGET_4_D_FILE=c_source.d
 
 prepare_and_cd_to_test_temp_dir()
 {

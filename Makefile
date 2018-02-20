@@ -16,4 +16,8 @@ robustness_tests: lint
 mod_time_tests: lint
 	cd tests && ./test_mod_time_combinations.sh
 
-test: lint mainline_tests deps_combinations_tests robustness_tests mod_time_tests
+c_auto_dep_gen_tests: lint
+	cd tests && ./test_c_auto_dep_gen.sh
+
+test: lint mainline_tests deps_combinations_tests robustness_tests \
+	mod_time_tests c_auto_dep_gen_tests
