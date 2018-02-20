@@ -25,12 +25,15 @@ export TARGET_2_DEPENDENCIES=(source1.tmp source2.tmp)
 export TARGET_3_TARGET=output3.tmp
 export TARGET_3_DEPENDENCIES=("${TARGET_2_DEPENDENCIES[@]}")
 
-# All tests should only create files with the suffixes covered here so that
-# they are always cleaned up.
-clean_tmp_files()
+prepare_and_cd_to_test_temp_dir()
 {
-    rm -f -- *.tmp *"${DEFAULT_HASH_FILE_SUFFIX}"
-    rm -fr -- "${HASH_DIR_NAME}"
+    # Run all tests in a tmp dir - shunit2 provides one for us.
+    # This way there's no need to clean up at the end because the tmp dir is
+    # cleaned up by shunit2 itself.
+    cd "${SHUNIT_TMPDIR}" || exit
+
+    # Clean any lingering files from the temp directory before a test starts.
+    rm -rf -- ./*
 }
 
 # Edit a file's contents so it will require anything depending to be remade.

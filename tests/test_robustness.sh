@@ -6,15 +6,10 @@
 # shunit2 function called before each test.
 setUp()
 {
-    # Run all tests in a tmp dir. This way there's no need to clean up at the
-    # end because the tmp dir is cleaned up by shunit2 itself.
-    cd "${SHUNIT_TMPDIR}" || exit
-
-    # Clean any lingering files before a test.
-    clean_tmp_files
+    prepare_and_cd_to_test_temp_dir
 
     # Put some initial source files used by rules in place.
-    echo "example source line" >> "${TARGET_1_DEPENDENCY}"
+    echo "example source line" > "${TARGET_1_DEPENDENCY}"
 }
 
 # -----
