@@ -53,6 +53,8 @@ There's also built in support for [GCC's automatic dependency generation](https:
 
 - While this utility helps speed up build times in the main uses cases covered above, in completely clean builds there will be the overhead of computing hashes on top of any usual building work and so these will almost certainly be some amount slower.
 
+- The default use case for this utility is in preventing rebuilds when source files have new timestamps, but their content is unchanged. However there is a mode of operation where the hashes are always computed and checked, e.g. you need to cope with source files changing but still having old timestamps and ensuring a rebuild is still triggered - see the detailed information on this in `hashdeps.mk`.
+
 ### Configuration
 
 Users can set various configuration variables - e.g. by setting the variables _before_ including the provided makefile, or at the command line call to make. For example:
