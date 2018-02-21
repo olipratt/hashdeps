@@ -250,7 +250,7 @@ HASHDEPS_FORCE_TARGET:
 define hash_deps_in_autogen_dep_file
     $(if $(HASHDEPS_DISABLE),\
 		,\
-		sed -i -e :a -e \
-			'/\\$$/N; s/\\$$/\\/; ta' -e 's/:\(.\+\)/: $$(call hash_deps,\1)/'\
+		sed -i -e \
+			':a; /\\$$/N; s/\\$$/\\/; ta; s/:\(.\+\)/: $$(call hash_deps,\1)/'\
 			$(1))
 endef
