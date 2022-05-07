@@ -201,7 +201,7 @@ define unhash_deps
 endef
 
 # Make will delete files created by pattern rules by default - prevent this.
-.PRECIOUS: %$(HASHDEPS_HASH_SUFFIX)
+.PRECIOUS: $(HASHDEPS_HASH_TREE_SANITISED)%$(HASHDEPS_HASH_SUFFIX)
 
 # Check if the file hash in the file is still accurate. If not, write an
 # updated hash.
