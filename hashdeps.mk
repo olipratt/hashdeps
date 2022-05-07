@@ -201,7 +201,7 @@ define unhash_deps
 endef
 
 # Make will delete files created by pattern rules by default - prevent this.
-.PRECIOUS: %$(HASHDEPS_HASH_SUFFIX)
+.PRECIOUS: $(HASHDEPS_HASH_TREE_SANITISED)%$(HASHDEPS_HASH_SUFFIX)
 
 # Check if the file hash in the file is still accurate. If not, write an
 # updated hash.
@@ -215,7 +215,7 @@ $(HASHDEPS_HASH_TREE_SANITISED)%$(HASHDEPS_HASH_SUFFIX): % $(HASHDEPS_MAYBE_FORC
 				touch -d $(HASHDEPS_HASH_FILE_TIMESTAMP) "$@" &&,) \
 			$(HASHDEPS_ECHO) "Hash file still up to date: $@" ;} || \
 		{ $(HASHDEPS_ECHO) "Updating hash file: $@" && \
-			echo -n "$${curr_hash}" > "$@" ; }
+			/bin/echo -n "$${curr_hash}" > "$@" ; }
 
 # A 'clean' target that removes any generated hash files.
 # Delete any files with the unique hash file suffix, either anywhere in the
