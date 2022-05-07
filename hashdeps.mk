@@ -215,7 +215,7 @@ $(HASHDEPS_HASH_TREE_SANITISED)%$(HASHDEPS_HASH_SUFFIX): % $(HASHDEPS_MAYBE_FORC
 				touch -d $(HASHDEPS_HASH_FILE_TIMESTAMP) "$@" &&,) \
 			$(HASHDEPS_ECHO) "Hash file still up to date: $@" ;} || \
 		{ $(HASHDEPS_ECHO) "Updating hash file: $@" && \
-			echo -n "$${curr_hash}" > "$@" ; }
+			/bin/echo -n "$${curr_hash}" > "$@" ; }
 
 # A 'clean' target that removes any generated hash files.
 # Delete any files with the unique hash file suffix, either anywhere in the
